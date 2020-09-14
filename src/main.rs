@@ -7,11 +7,14 @@ use std::hash::{Hash, Hasher};
 use yui::prelude::*;
 use yui::yard::{ButtonState, Pressable};
 
+use crate::lib::prelude::*;
 use crate::YardId::{EditList, FacetEdit, PointEdit, ValueEdit};
 
 mod lib;
 
-struct MainSpark {}
+struct MainSpark {
+	_publisher: Box<dyn Publisher + Sync + Send + 'static>,
+}
 
 #[derive(Clone)]
 struct MainState {
@@ -112,6 +115,7 @@ impl Into<i32> for YardId {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-	yui::main(MainSpark {})?;
+	let publisher = Box::new(publisher::connect());
+	yui::main(MainSpark { _publisher: publisher })?;
 	Ok(())
 }

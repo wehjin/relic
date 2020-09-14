@@ -16,3 +16,7 @@ pub trait ValType {}
 // 	Set(&'a dyn Star, &'a dyn Feature<V>, &'a V),
 // 	Clr(&'a dyn Star, &'a dyn Feature<V>, &'a V),
 // }
+
+pub trait Publisher {
+
+}
