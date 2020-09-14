@@ -1,22 +1,19 @@
 pub trait Star {}
 
-pub trait StarSecret {
-	fn star(&self) -> dyn Star;
-}
+pub trait StarSecret: Star {}
 
-pub trait Feature<V: ValType> {
+pub trait Feature {
 	fn facet(&self) -> &str;
 	fn point(&self) -> &str;
-	fn val_type(&self) -> &V;
 }
 
-pub trait ValType {}
+pub enum ChangeOrder<'a> {
+	Add(&'a dyn Star, &'a dyn Feature, &'a str),
+	Drop(&'a dyn Star, &'a dyn Feature, &'a str),
+}
 
-// pub enum EditOrder<'a, V: ValType> {
-// 	Set(&'a dyn Star, &'a dyn Feature<V>, &'a V),
-// 	Clr(&'a dyn Star, &'a dyn Feature<V>, &'a V),
-// }
-
-pub trait Publisher {
-
+/// Top-level trait giving access to edits and reads.
+pub trait Node {
+	/// Publish orders to the network.
+	fn publish(&self, orders: &Vec<ChangeOrder>);
 }

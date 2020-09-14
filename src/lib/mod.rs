@@ -1,7 +1,11 @@
 pub mod core;
-pub mod publisher;
+pub mod node;
+pub mod star;
+pub mod feature;
+
+#[cfg(test)]
+mod tests;
 
 pub mod prelude {
 	pub use super::core::*;
-	pub use super::publisher;
 }
