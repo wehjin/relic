@@ -15,5 +15,5 @@ pub enum ChangeOrder<'a> {
 /// Top-level trait giving access to edits and reads.
 pub trait Node {
 	/// Publish orders to the network.
-	fn publish(&self, orders: &Vec<ChangeOrder>);
+	fn push(&self, orders: &Vec<ChangeOrder>);
 }

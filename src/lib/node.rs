@@ -7,6 +7,6 @@ pub fn start() -> impl Node {
 struct LocalNode {}
 
 impl Node for LocalNode {
-	fn publish(&self, orders: &Vec<ChangeOrder>) {}
+	fn push(&self, orders: &Vec<ChangeOrder>) {}
 }
 

@@ -1,3 +1,4 @@
+extern crate echo_lib;
 extern crate yui;
 
 use std::collections::hash_map::DefaultHasher;
@@ -5,10 +6,11 @@ use std::error::Error;
 use std::hash::{Hash, Hasher};
 
 use yui::prelude::*;
+use yui::SenderLink;
 use yui::yard::{ButtonState, Pressable};
 
-pub use crate::lib::prelude;
 pub use crate::lib::node;
+pub use crate::lib::prelude;
 use crate::YardId::{EditList, FacetEdit, PointEdit, ValueEdit};
 
 mod lib;
@@ -69,23 +71,23 @@ impl Spark for MainSpark {
 	}
 
 
-	fn render(state: &Self::State, link: &Link<Self::Action>) -> Option<ArcYard> {
+	fn render(state: &Self::State, link: &SenderLink<Self::Action>) -> Option<ArcYard> {
 		let section_names = yard::trellis(3, 0, Cling::Left, vec![
-			yard::label("Editor", StrokeColor::BodyOnBackground, Cling::Right).pad_cols(1).pressable(|_| {})
+			yard::label("Editor", StrokeColor::BodyOnBackground, Cling::Right).pad_cols(1).pressable(SenderLink::ignore())
 		]);
-		let close = yard::button("Close", ButtonState::enabled(link.callback(|_| MainAction::Close)));
+		let close = yard::button("Close", ButtonState::enabled(link.clone().map(|_| MainAction::Close)));
 		let sidebar = section_names.pack_top(3, close.pad(1));
 
-		let facet_edit = yard::textfield(FacetEdit.into(), "Facet", state.facet.clone(), link.callback(MainAction::Facet));
-		let point_edit = yard::textfield(PointEdit.into(), "Point", state.point.clone(), link.callback(MainAction::Point));
-		let value_edit = yard::textfield(ValueEdit.into(), "Value", state.value.clone(), link.callback(MainAction::Value));
+		let facet_edit = yard::textfield(FacetEdit.into(), "Facet", state.facet.clone(), link.clone().map(MainAction::Facet));
+		let point_edit = yard::textfield(PointEdit.into(), "Point", state.point.clone(), link.clone().map(MainAction::Point));
+		let value_edit = yard::textfield(ValueEdit.into(), "Value", state.value.clone(), link.clone().map(MainAction::Value));
 		let edits = yard::list(EditList.into(), state.active_index, vec![
 			(4, facet_edit.confine_height(3, Cling::Top)),
 			(4, point_edit.confine_height(3, Cling::Top)),
 			(4, value_edit.confine_height(3, Cling::Top)),
 		]);
 		let radiate_state = if state.facet.is_valid() && state.point.is_valid() && state.value.is_valid() {
-			ButtonState::enabled(|_| {})
+			ButtonState::enabled(SenderLink::ignore())
 		} else {
 			ButtonState::disabled()
 		};
