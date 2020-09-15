@@ -1,9 +1,9 @@
 use std::error::Error;
 use std::path::Path;
 
-use echo_lib::{Echo, ObjectId, Point, Target};
+use echo_lib::{Echo, Target};
 
-use crate::lib::core::{ChangeOrder, Feature, Node, Star};
+use crate::lib::core::{ChangeOrder, echo_point, Node, object_id, View};
 
 pub fn start<P: AsRef<Path>>(data_dir: P) -> Result<impl Node, Box<dyn Error>> {
 	let pending_pushes = Echo::connect("pending-pushes", data_dir.as_ref());
@@ -13,7 +13,7 @@ pub fn start<P: AsRef<Path>>(data_dir: P) -> Result<impl Node, Box<dyn Error>> {
 struct LocalNode { pending_pushes: Echo }
 
 impl Node for LocalNode {
-	fn push(&self, orders: &Vec<ChangeOrder>) -> Result<(), Box<dyn Error>> {
+	fn push(&self, orders: &Vec<ChangeOrder>) {
 		let writes = orders.iter().map(|change| match change {
 			&ChangeOrder::Add(star, feature, value) => {
 				let object_id = object_id(star);
@@ -32,16 +32,12 @@ impl Node for LocalNode {
 			writes.iter().for_each(|(object_id, point, target)| {
 				scope.write_object_properties(object_id, vec![(&point, target.clone())]);
 			});
-		})?;
-		Ok(())
+		}).expect("Failed to write to pending_pushes");
+	}
+
+	fn view(&self) -> View {
+		let pending_pushes = self.pending_pushes.chamber().expect("Failed to chamber pending_pushes");
+		View { pending_pushes }
 	}
 }
 
-
-fn object_id(star: &dyn Star) -> ObjectId {
-	ObjectId::String(star.star_display_code().to_string())
-}
-
-fn echo_point(feature: &dyn Feature) -> Point {
-	Point::String { aspect: feature.facet().to_string(), name: feature.point().to_string() }
-}

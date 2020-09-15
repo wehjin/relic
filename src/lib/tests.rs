@@ -16,9 +16,10 @@ fn it_works() -> Result<(), Box<dyn Error>> {
 	let node = node::start(&data_dir)?;
 	node.push(&vec![
 		ChangeOrder::Add(&MY_STAR_SECRET, &FEATURE_STAR_ALIAS, "Bartholomew"),
-		ChangeOrder::Drop(&MY_STAR_SECRET, &FEATURE_STAR_ALIAS, "Andromeda"),
-	])?;
-	assert_eq!(2 + 2, 4);
+	]);
+	let view = node.view();
+	let star_alias = view.unconfirmed_value(&MY_STAR_SECRET, &FEATURE_STAR_ALIAS);
+	assert_eq!(Some("Bartholomew".to_string()), star_alias);
 	Ok(())
 }
 
