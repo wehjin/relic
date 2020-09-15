@@ -1,3 +1,5 @@
+extern crate echo_lib;
+
 pub mod core;
 pub mod node;
 pub mod star;

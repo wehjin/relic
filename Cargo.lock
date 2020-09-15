@@ -241,6 +241,7 @@ name = "relic"
 version = "0.1.0"
 dependencies = [
  "echo-lib",
+ "rand",
  "yui",
 ]
 

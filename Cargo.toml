@@ -9,3 +9,6 @@ edition = "2018"
 [dependencies]
 yui = { git = "https://github.com/wehjin/yui.git" }
 echo-lib = { git = "https://github.com/wehjin/gal-core.git" }
+
+[dev-dependencies]
+rand = "0.7.3"
